@@ -73,3 +73,9 @@ gem "omniauth-eve_online-sso", "~> 0.7.0"
 gem "better_errors", "~> 2.10"
 
 gem "binding_of_caller", "~> 1.0"
+
+gem "ruby-progressbar", "~> 1.13"
+
+gem "faraday", "~> 2.12"
+
+gem "parallel", "~> 1.26"

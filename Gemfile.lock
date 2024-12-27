@@ -415,16 +415,19 @@ DEPENDENCIES
   dartsass-rails
   debug
   dotenv
+  faraday (~> 2.12)
   importmap-rails
   jbuilder
   kamal
   omniauth (~> 2.1)
   omniauth-eve_online-sso (~> 0.7.0)
+  parallel (~> 1.26)
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.0)
   rubocop-rails-omakase
+  ruby-progressbar (~> 1.13)
   selenium-webdriver
   solid_cable
   solid_cache
