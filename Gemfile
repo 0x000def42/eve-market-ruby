@@ -49,6 +49,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem "dotenv"
 end
 
 group :development do
@@ -61,3 +62,11 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "omniauth", "~> 2.1"
+
+gem "omniauth-eve_online-sso", "~> 0.7.0"
+
+gem "better_errors", "~> 2.10"
+
+gem "binding_of_caller", "~> 1.0"
