@@ -46,6 +46,7 @@ namespace :orders do
 
     mutex = Mutex.new
     systems = System.all.inject({}) { |acc, v| acc[v.eve_id] = v.id; acc }
+    types = ItemType.all.inject({}) { |acc, v| acc[v.eve_id] = v.id; acc }
 
     Parallel.each(dataset, in_threads: ENV.fetch("RAILS_MAX_THREADS").to_i) do |item|
       orders = EveClient.instance.get("/markets/$1/orders", item[:region_eve_id], params: { page: item[:page] })
@@ -59,6 +60,7 @@ namespace :orders do
       orders.each do |order|
         begin
           order["system_id"] = systems[order["system_id"]]
+          order["type_id"] = types[order["type_id"]]
         rescue => e
           binding.irb
         end

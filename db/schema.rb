@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_04_125933) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_05_143243) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_125933) do
     t.string "name"
     t.index ["eve_id"], name: "index_constellations_on_eve_id"
     t.index ["region_id"], name: "index_constellations_on_region_id"
+  end
+
+  create_table "item_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "eve_id"
+    t.string "name"
+    t.float "mass"
+    t.index ["eve_id"], name: "index_item_types_on_eve_id"
   end
 
   create_table "markets_orders", force: :cascade do |t|
@@ -41,6 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_125933) do
     t.integer "volume_total"
     t.index ["order_id"], name: "index_markets_orders_on_order_id", unique: true
     t.index ["system_id"], name: "index_markets_orders_on_system_id"
+    t.check_constraint "volume_remain > 0", name: "volume_remain_positive"
   end
 
   create_table "regions", force: :cascade do |t|
