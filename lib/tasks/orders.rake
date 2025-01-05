@@ -45,18 +45,27 @@ namespace :orders do
     )
 
     mutex = Mutex.new
+    systems = System.all.inject({}) { |acc, v| acc[v.eve_id] = v.id; acc }
 
     Parallel.each(dataset, in_threads: ENV.fetch("RAILS_MAX_THREADS").to_i) do |item|
       orders = EveClient.instance.get("/markets/$1/orders", item[:region_eve_id], params: { page: item[:page] })
 
-      next if orders.empty?
+      mutex.synchronize do
+        progressbar.increment
+      end
+
+      next if orders.empty? || orders.is_a?(Hash)
+
+      orders.each do |order|
+        begin
+          order["system_id"] = systems[order["system_id"]]
+        rescue => e
+          binding.irb
+        end
+      end
 
       ActiveRecord::Base.transaction do
         MarketsOrder.insert_all(orders, unique_by: :order_id)
-      end
-
-      mutex.synchronize do
-        progressbar.increment
       end
     end
   end
