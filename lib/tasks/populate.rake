@@ -98,4 +98,42 @@ namespace :populate do
       end
     end
   end
+
+  desc "Populate structures"
+  task structures: :environment do
+    ids = EveClient.instance.get("/universe/structures/")
+    existed_ids = Structure.where(eve_id: ids).pluck(:eve_id)
+    populate_ids = ids - existed_ids
+
+    progressbar = ProgressBar.create(
+      title: "Structure population progress",
+      starting_at: 0,
+      total: populate_ids.size,
+      throttle_rate: 0.1,
+      format: "%c/%C"
+    )
+
+    mutex = Mutex.new
+
+    Parallel.each(populate_ids, in_threads: ENV.fetch("RAILS_MAX_THREADS").to_i) do |id|
+      result = EveClient.instance.get("/universe/structures/$1", id)
+      structure = System.find_by(eve_id: result["solar_system_id"])
+      unless structure
+        puts "Structure for system skipped #{result["solar_system_id"]}"
+        next
+      end
+      ActiveRecord::Base.transaction do
+        Structure.create!(
+          eve_id: id,
+          name: result["name"],
+          system_id: structure.id,
+          owner_id: result["owner_id"],
+          type_id: result["type_id"],
+        )
+      end
+      mutex.synchronize do
+        progressbar.increment
+      end
+    end
+  end
 end

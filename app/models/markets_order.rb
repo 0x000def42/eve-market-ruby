@@ -1,0 +1,2 @@
+class MarketsOrder < ApplicationRecord
+end
